@@ -25,7 +25,7 @@ export default function Index() {
       <h1 className="text-2xl font-bold">
         Hi {loaderData.user.username}!. Welcome to mixify
       </h1>
-      <signOutFetcher.Form method="post" action="/logout">
+      <signOutFetcher.Form method="post" action="/resources/logout">
         <Button variant="link">Logout</Button>
       </signOutFetcher.Form>
     </div>
