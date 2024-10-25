@@ -46,6 +46,7 @@ function PlaylistForm({
     isMountingRef.current = true;
   }, []);
 
+  // TODO: try to find out a better way to achieve that
   useEffect(() => {
     if (!isMountingRef.current) {
       setOpen(false);

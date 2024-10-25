@@ -1,0 +1,1 @@
+ALTER TABLE `playlists` ADD `image_url` text;

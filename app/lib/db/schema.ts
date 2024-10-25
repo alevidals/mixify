@@ -22,6 +22,7 @@ export const playlistsSchema = sqliteTable("playlists", {
   userId: text("user_id")
     .references(() => usersSchema.id)
     .notNull(),
+  imageUrl: text("image_url"),
   createdAt: text("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

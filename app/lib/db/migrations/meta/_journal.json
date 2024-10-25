@@ -15,6 +15,13 @@
       "when": 1729777904692,
       "tag": "0001_vengeful_giant_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1729859707028,
+      "tag": "0002_lyrical_mister_fear",
+      "breakpoints": true
     }
   ]
 }

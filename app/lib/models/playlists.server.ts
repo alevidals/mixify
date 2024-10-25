@@ -6,7 +6,31 @@ import { db } from "~/lib/db/drizzle";
 import { playlistsSchema } from "~/lib/db/schema";
 import { requireUserId } from "~/lib/models/auth.server";
 import { FormError } from "~/lib/types";
-import { getErrors } from "~/lib/utils";
+import { getErrors, getProminentColor } from "~/lib/utils";
+
+export async function getPlaylist(slug: string) {
+  const playlistsData = await db
+    .select({
+      id: playlistsSchema.id,
+      name: playlistsSchema.name,
+      slug: playlistsSchema.slug,
+      imageUrl: playlistsSchema.imageUrl,
+    })
+    .from(playlistsSchema)
+    .where(eq(playlistsSchema.slug, slug))
+    .limit(1);
+
+  if (!playlistsData.length) {
+    throw redirect("/");
+  }
+
+  const [playlist] = playlistsData;
+
+  return {
+    ...playlist,
+    color: await getProminentColor(playlist.imageUrl!),
+  };
+}
 
 export async function getPlaylists(userId: string) {
   const playlists = await db
@@ -14,6 +38,7 @@ export async function getPlaylists(userId: string) {
       id: playlistsSchema.id,
       name: playlistsSchema.name,
       slug: playlistsSchema.slug,
+      imageUrl: playlistsSchema.imageUrl,
     })
     .from(playlistsSchema)
     .where(eq(playlistsSchema.userId, userId))
