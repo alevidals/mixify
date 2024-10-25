@@ -1,6 +1,21 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getPlaylist } from "~/lib/models/playlists.server";
+
+export const meta: MetaFunction = ({ params }) => {
+  return [
+    { title: `Mixify - ${params.slug}` },
+    {
+      property: "og:title",
+      content: `Mixify - ${params.slug}`,
+    },
+    {
+      name: "description",
+      content:
+        "Mixify is a music player that lets you create playlists and play them.",
+    },
+  ];
+};
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.slug) throw redirect("/");
