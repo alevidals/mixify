@@ -1,10 +1,10 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { logout } from "~/lib/models/auth.server";
+import { addPlaylist } from "~/lib/models/playlists.server";
 
 export function loader() {
-  return redirect("/login");
+  return redirect("/");
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  return logout(request);
+  return addPlaylist(request);
 }

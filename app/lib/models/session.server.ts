@@ -17,7 +17,7 @@ export const { getSession, commitSession, destroySession } =
     cookie: {
       name: "session",
       httpOnly: true,
-      expires: new Date(Date.now() + 60 * 60 * 1000),
+      maxAge: 60 * 60 * 1000,
       path: "/",
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",

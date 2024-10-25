@@ -14,3 +14,18 @@ export const usersSchema = sqliteTable("users", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
+
+export const playlistsSchema = sqliteTable("playlists", {
+  id: text("id").$defaultFn(randomUUID).primaryKey(),
+  name: text("name").unique().notNull(),
+  slug: text("slug").unique().notNull(),
+  userId: text("user_id")
+    .references(() => usersSchema.id)
+    .notNull(),
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
