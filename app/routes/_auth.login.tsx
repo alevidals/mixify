@@ -6,8 +6,6 @@ import { Label } from "~/components/ui/label";
 import { signIn } from "~/lib/models/auth.server";
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log(process.env.TURSO_DATABASE_URL);
-  console.log(process.env.TURSO_AUTH_TOKEN);
   return signIn({ request });
 }
 
