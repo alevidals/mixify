@@ -1,9 +1,24 @@
 import { ActionFunctionArgs } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, MetaFunction, useActionData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { signIn } from "~/lib/models/auth.server";
+
+export const meta: MetaFunction = () => [
+  {
+    title: "Mixify - Login",
+  },
+  {
+    property: "og:title",
+    content: "Mixify - Login",
+  },
+  {
+    name: "description",
+    content:
+      "Mixify is a music player that lets you create playlists and play them.",
+  },
+];
 
 export async function action({ request }: ActionFunctionArgs) {
   return signIn({ request });

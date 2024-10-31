@@ -6,7 +6,7 @@ import { db } from "~/lib/db/drizzle";
 import { playlistsSchema } from "~/lib/db/schema";
 import { requireUserId } from "~/lib/models/auth.server";
 import { FormError } from "~/lib/types";
-import { getErrors, getProminentColor } from "~/lib/utils";
+import { getErrors, uploadFile } from "~/lib/utils";
 
 export async function getPlaylist(slug: string) {
   const playlistsData = await db
@@ -26,10 +26,7 @@ export async function getPlaylist(slug: string) {
 
   const [playlist] = playlistsData;
 
-  return {
-    ...playlist,
-    color: await getProminentColor(playlist.imageUrl!),
-  };
+  return playlist;
 }
 
 export async function getPlaylists(userId: string) {
@@ -59,9 +56,20 @@ async function existsPlaylist(slug: string, userId: string) {
   return playlist.length !== 0;
 }
 
-const addPlaylistSchema = z.object({
-  name: z.string(),
-});
+const addPlaylistSchema = z
+  .object({
+    name: z.string(),
+    file: z.instanceof(File),
+  })
+  .superRefine((data, ctx) => {
+    if (data.file.size > 1024 * 1024 * 2) {
+      ctx.addIssue({
+        code: "custom",
+        message: "File size must be less than 2MB",
+        path: ["file"],
+      });
+    }
+  });
 
 type AddPlaylist = z.infer<typeof addPlaylistSchema>;
 
@@ -78,7 +86,7 @@ export async function addPlaylist(request: Request) {
     return json({ errors }, { status: 400 });
   }
 
-  const { name } = result.data;
+  const { name, file } = result.data;
   const slug = slugify(name);
 
   const exists = await existsPlaylist(slug, userId);
@@ -88,12 +96,22 @@ export async function addPlaylist(request: Request) {
     return json({ errors }, { status: 400 });
   }
 
+  const response = await uploadFile(file);
+
+  if (response.error) {
+    errors.formError = "Error uploading file";
+    return json({ errors }, { status: 400 });
+  }
+
+  const { url } = response.data;
+
   const [createdPlaylist] = await db
     .insert(playlistsSchema)
     .values({
       name,
       slug,
       userId,
+      imageUrl: url,
     })
     .returning({
       slug: playlistsSchema.slug,

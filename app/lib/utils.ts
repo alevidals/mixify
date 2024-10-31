@@ -1,9 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
+import vibrant from "node-vibrant";
 import { twMerge } from "tailwind-merge";
+import { UTApi } from "uploadthing/server";
 import { ZodError } from "zod";
 import { FormError } from "./types";
-import getPixels from "get-pixels";
-import { extractColors } from "extract-colors";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -20,20 +20,18 @@ export function getErrors<T>(error: ZodError<T>) {
   return errors;
 }
 
-export function getProminentColor(src: string) {
-  return new Promise<string | null>((resolve, reject) => {
-    getPixels(src, (err, pixels) => {
-      if (err) {
-        reject(null);
-      }
+export async function getProminentColor(src: string) {
+  try {
+    const palette = await vibrant.from(src).getPalette();
+    return palette.Vibrant?.hex;
+  } catch (error) {
+    return undefined;
+  }
+}
 
-      const data = [...pixels.data];
-      const [width, height] = pixels.shape;
+export async function uploadFile(file: File) {
+  const utapi = new UTApi();
+  const response = await utapi.uploadFiles(file);
 
-      extractColors({ data, width, height }).then((colors) => {
-        const color = colors.sort((a, b) => b.area - a.area)[0].hex;
-        resolve(color);
-      });
-    });
-  });
+  return response;
 }

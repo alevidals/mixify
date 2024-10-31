@@ -58,6 +58,7 @@ function PlaylistForm({
   return (
     <fetcher.Form
       action="/resources/playlists"
+      encType="multipart/form-data"
       method="post"
       className={cn("grid items-start gap-4", className)}
     >
@@ -65,6 +66,12 @@ function PlaylistForm({
       {fetcher.data?.errors.name ? (
         <span className="text-xs font-bold text-red-500">
           {fetcher.data.errors.name}
+        </span>
+      ) : null}
+      <Input type="file" name="file" required accept="image/*" />
+      {fetcher.data?.errors.file ? (
+        <span className="text-xs font-bold text-red-500">
+          {fetcher.data.errors.file}
         </span>
       ) : null}
       {fetcher.data?.errors.formError ? (
